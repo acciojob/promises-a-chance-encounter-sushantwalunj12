@@ -1,31 +1,28 @@
-const output = document.getElementById("output");
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 const promises = [];
 for (let i = 1; i <= 5; i++) {
-  const promise = new Promise((resolve, reject) => {
-    const randomNumber = getRandomNumber(1, 10);
-    const shouldReject = Math.random() < 0.5;
-
-    if (shouldReject) {
-      reject(`Promise ${i} rejected with error`);
-    } else {
-      resolve(randomNumber);
-    }
+  const p = new Promise((resolve, reject) => {
+    const randomNumber = Math.floor(Math.random() * 10) + 1;
+    setTimeout(() => {
+      if (Math.random() >= 0.5) {
+        resolve(randomNumber);
+      } else {
+        reject(`Promise ${i} rejected with error`);
+      }
+    }, 1000);
   });
-  promises.push(promise);
+  promises.push(p);
 }
 
 Promise.all(promises)
   .then((results) => {
-    for (let i = 0; i < results.length; i++) {
-      output.innerHTML += `<p>Promise ${i + 1}: ${results[i]}</p>`;
-    }
+    results.forEach((result, index) => {
+      const p = document.createElement('p');
+      p.innerText = `Promise ${index + 1}: ${result}`;
+      document.getElementById('output').appendChild(p);
+    });
   })
   .catch((error) => {
-    for (let i = 0; i < promises.length; i++) {
-      output.innerHTML += `<p>${error}</p>`;
-    }
+    const p = document.createElement('p');
+    p.innerText = error;
+    document.getElementById('output').appendChild(p);
   });
